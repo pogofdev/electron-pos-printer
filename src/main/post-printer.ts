@@ -159,7 +159,7 @@ export class PosPrinter {
                    * 1px = 264.5833 microns
                    */
 
-                  pageSize: { width, height },
+                  pageSize: { width, height: 3276 },
                   ...(options.header && { color: options.header }),
                   ...(options.footer && { color: options.footer }),
                   ...(options.color && { color: options.color }),
