@@ -1,6 +1,8 @@
 @page {
   margin: 0;
   page-break-before: avoid;
+  page-break-after: avoid;
+  page-break-inside: avoid;
 }
 body {
   font-size: 12px;
