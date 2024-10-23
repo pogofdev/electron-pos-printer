@@ -133,7 +133,7 @@ export class PosPrinter {
                   "document.body.clientHeight"
                 );
               height = convertPixelsToMicrons(clientHeight);
-              height = 3276;
+              height = clientHeight;
             }
 
             if (!options.preview) {
