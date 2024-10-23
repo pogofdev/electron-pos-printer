@@ -196,7 +196,7 @@ export class PosPrinter {
                     resolve({ complete: arg, options });
                     printedState = true;
                   }
-                  mainWindow.close();
+                  // mainWindow.close();
                 }
               );
             } else {
