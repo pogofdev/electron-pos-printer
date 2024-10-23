@@ -97,5 +97,5 @@ export function parsePaperSizeInMicrons(pageSize?: PaperSize | SizeOptions): {
 }
 
 export function convertPixelsToMicrons(pixels: number): number {
-  return Math.ceil(pixels * 264.5833 * 1000);
+  return Math.ceil(pixels * 264.5833);
 }
