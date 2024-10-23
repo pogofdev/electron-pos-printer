@@ -5,6 +5,14 @@
   page-break-inside: avoid;
 }
 
+@media only print {
+  #print {
+    width: auto;
+    height: auto;
+    overflow: visible;
+  }
+}
+
 body {
   font-size: 12px;
   /*line-height: 24px;*/

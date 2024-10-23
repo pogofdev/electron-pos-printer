@@ -28,6 +28,7 @@ export function generatePageText(arg) {
 export function generatePageHtml(arg) {
   const htmlString = arg.value;
   let div = document.createElement("div") as HTMLElement;
+  div.id = "print";
   div.innerHTML = htmlString;
   div = applyElementStyles(div, arg.style) as HTMLElement;
 

@@ -10,6 +10,7 @@ import {
   parsePaperSizeInMicrons,
   sendIpcMsg,
 } from "./utils";
+let mainWindow: BrowserWindow;
 
 if ((process as any).type == "renderer") {
   throw new Error(
@@ -90,14 +91,16 @@ export class PosPrinter {
        *
        */
 
-      let mainWindow = new BrowserWindow({
-        ...parsePaperSize(options.pageSize),
-        show: !!options.preview,
-        webPreferences: {
-          nodeIntegration: true, // For electron >= 4.0.0
-          contextIsolation: false,
-        },
-      });
+      if (!mainWindow) {
+        mainWindow = new BrowserWindow({
+          ...parsePaperSize(options.pageSize),
+          show: !!options.preview,
+          webPreferences: {
+            nodeIntegration: true, // For electron >= 4.0.0
+            contextIsolation: false,
+          },
+        });
+      }
 
       // If the mainWindow is closed, reset the `mainWindow` var to null
       mainWindow.on("closed", () => {
