@@ -132,8 +132,12 @@ export class PosPrinter {
                 await mainWindow.webContents.executeJavaScript(
                   "document.body.clientHeight"
                 );
+              console.log(
+                "convertPixelsToMicrons(clientHeight);",
+                convertPixelsToMicrons(clientHeight),
+                clientHeight
+              );
               height = convertPixelsToMicrons(clientHeight);
-              height = clientHeight;
             }
 
             if (!options.preview) {
