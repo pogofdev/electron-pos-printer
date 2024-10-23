@@ -7,6 +7,7 @@
 import "./index.css";
 import {
   applyElementStyles,
+  generatePageHtml,
   generatePageText,
   generateQRCode,
   generateTableCell,
@@ -42,7 +43,7 @@ async function renderDataToHTML(event, arg) {
   switch (arg.line.type) {
     case "html":
       try {
-        body.appendChild(arg.line);
+        body.appendChild(generatePageHtml(arg.line));
         event.sender.send("render-line-reply", { status: true, error: null });
       } catch (e) {
         event.sender.send("render-line-reply", {
