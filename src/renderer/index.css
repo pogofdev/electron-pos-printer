@@ -4,6 +4,21 @@
   page-break-after: avoid;
   page-break-inside: avoid;
 }
+@media print {
+  /* Tránh ngắt trang bên trong phần tử */
+  .no-break {
+    break-inside: avoid;
+  }
+
+  /* Tránh ngắt trang trước và sau phần tử */
+  .no-page-break-before {
+    break-before: avoid;
+  }
+
+  .no-page-break-after {
+    break-after: avoid;
+  }
+}
 body {
   font-size: 12px;
   /*line-height: 24px;*/
