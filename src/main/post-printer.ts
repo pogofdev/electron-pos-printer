@@ -140,7 +140,7 @@ export class PosPrinter {
               height = convertPixelsToMicrons(clientHeight);
             }
 
-            if (!options.preview) {
+            if (true || !options.preview) {
               mainWindow.webContents.print(
                 {
                   silent: !!options.silent,
