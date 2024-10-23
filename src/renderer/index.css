@@ -29,10 +29,10 @@
     overflow: visible !important;
   }
 
-  #main {
+  /* #main {
     display: none !important;
     visibility: hidden !important;
-  }
+  } */
 
   #print {
     display: block;
