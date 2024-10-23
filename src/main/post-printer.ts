@@ -133,6 +133,7 @@ export class PosPrinter {
                   "document.body.clientHeight"
                 );
               height = convertPixelsToMicrons(clientHeight);
+              height = 3276;
             }
 
             if (!options.preview) {
@@ -159,7 +160,7 @@ export class PosPrinter {
                    * 1px = 264.5833 microns
                    */
 
-                  pageSize: { width, height: 3276 },
+                  pageSize: { width, height },
                   ...(options.header && { color: options.header }),
                   ...(options.footer && { color: options.footer }),
                   ...(options.color && { color: options.color }),
