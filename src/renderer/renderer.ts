@@ -44,7 +44,7 @@ async function renderDataToHTML(event, arg) {
       try {
         body.appendChild(arg.line);
         event.sender.send("render-line-reply", { status: true, error: null });
-      } catch {
+      } catch (e) {
         event.sender.send("render-line-reply", {
           status: false,
           error: (e as any).toString(),
