@@ -4,7 +4,8 @@
   page-break-after: avoid;
   page-break-inside: avoid;
 }
-@media print {
+
+@media only print {
   /* Tránh ngắt trang bên trong phần tử */
   .no-break {
     break-inside: avoid;
@@ -18,7 +19,31 @@
   .no-page-break-after {
     break-after: avoid;
   }
+
+  @page {
+    size: auto; /* auto is the initial value */
+    margin: 0; /* this affects the margin in the printer settings */
+    height: auto !important;
+    width: 80mm !important;
+  }
+
+  html,
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    /* position: fixed; */
+    left: 0;
+    top: 0;
+    background: #eee !important;
+    font-family: "Tahoma", "Segoe UI Light", "Segoe UI", "Helvetica Neue Light",
+      "Helvetica Neue", Helvetica, Verdana, sans-serif !important;
+    visibility: hidden;
+    height: auto !important;
+    width: 80mm !important;
+    overflow: visible !important;
+  }
 }
+
 body {
   font-size: 12px;
   /*line-height: 24px;*/
