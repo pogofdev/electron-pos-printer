@@ -1,21 +1,21 @@
 /*
  * Copyright (c) 2019-2022. Author Hubert Formin <hformin@gmail.com>
  */
-import { PosPrintData, PosPrintOptions } from './models'
-import { BrowserWindow } from 'electron'
-import { join } from 'path'
+import { PosPrintData, PosPrintOptions } from "./models";
+import { BrowserWindow } from "electron";
+import { join } from "path";
 import {
   convertPixelsToMicrons,
   parsePaperSize,
   parsePaperSizeInMicrons,
-  sendIpcMsg
-} from './utils'
-let mainWindow: BrowserWindow
+  sendIpcMsg,
+} from "./utils";
+let mainWindow: BrowserWindow;
 
-if ((process as any).type == 'renderer') {
+if ((process as any).type == "renderer") {
   throw new Error(
     'electron-pos-printer: use remote.require("electron-pos-printer") in the render process'
-  )
+  );
 }
 
 /**
@@ -28,7 +28,10 @@ export class PosPrinter {
    * @param options {PosPrintOptions}
    * @return {Promise}
    */
-  public static print(data: PosPrintData[], options: PosPrintOptions): Promise<any> {
+  public static print(
+    data: PosPrintData[],
+    options: PosPrintOptions
+  ): Promise<any> {
     return new Promise((resolve, reject) => {
       /**
        * Validation
@@ -39,20 +42,24 @@ export class PosPrinter {
           new Error(
             "A printer name is required, if you don't want to specify a printer name, set silent to true"
           ).toString()
-        )
+        );
       }
       // 2. Reject if pageSize is object and pageSize.height or pageSize.width is not set
-      if (typeof options.pageSize == 'object') {
+      if (typeof options.pageSize == "object") {
         if (!options.pageSize.height || !options.pageSize.width) {
-          reject(new Error('height and width properties are required for options.pageSize'))
+          reject(
+            new Error(
+              "height and width properties are required for options.pageSize"
+            )
+          );
         }
       }
       // else
-      let printedState = false // If the job has been printer or not
-      let window_print_error: any = null // The error returned if the printing fails
+      let printedState = false; // If the job has been printer or not
+      let window_print_error: any = null; // The error returned if the printing fails
       const timeOut = options.timeOutPerLine
         ? options.timeOutPerLine * data.length + 200
-        : 400 * data.length + 200
+        : 400 * data.length + 200;
 
       /**
        * If in live mode i.e. `options.preview` is false & if `options.silent` is false
@@ -70,11 +77,12 @@ export class PosPrinter {
         setTimeout(() => {
           if (!printedState) {
             const errorMsg =
-              window_print_error || '[TimedOutError] Make sure your printer is connected'
-            reject(errorMsg)
-            printedState = true
+              window_print_error ||
+              "[TimedOutError] Make sure your printer is connected";
+            reject(errorMsg);
+            printedState = true;
           }
-        }, timeOut)
+        }, timeOut);
       }
       /**
        * Create Browser window
@@ -89,19 +97,21 @@ export class PosPrinter {
           show: !!options.preview,
           webPreferences: {
             nodeIntegration: true, // For electron >= 4.0.0
-            contextIsolation: false
-          }
-        })
+            contextIsolation: false,
+          },
+        });
       }
 
       // If the mainWindow is closed, reset the `mainWindow` var to null
-      mainWindow.on('closed', () => {
-        ;(mainWindow as any) = null
-      })
+      mainWindow.on("closed", () => {
+        (mainWindow as any) = null;
+      });
 
-      mainWindow.loadFile(options.pathTemplate || join(__dirname, 'renderer/index.html'))
+      mainWindow.loadFile(
+        options.pathTemplate || join(__dirname, "renderer/index.html")
+      );
 
-      mainWindow.webContents.on('did-finish-load', async () => {
+      mainWindow.webContents.on("did-finish-load", async () => {
         // get system printers
         // const system_printers = mainWindow.webContents.getPrinters();
         // const printer_index = system_printers.findIndex(sp => sp.name === options.printerName);
@@ -111,35 +121,36 @@ export class PosPrinter {
         //     return;
         // }
         // else start initialize render process page
-        await sendIpcMsg('body-init', mainWindow.webContents, options)
+        await sendIpcMsg("body-init", mainWindow.webContents, options);
         /**
          * Render print data as html in the mainWindow render process
          *
          */
         return PosPrinter.renderPrintDocument(mainWindow, data)
           .then(async () => {
-            let { width, height } = parsePaperSizeInMicrons(options.pageSize)
+            let { width, height } = parsePaperSizeInMicrons(options.pageSize);
             // Get the height of content window, if the pageSize is a string
-            if (typeof options.pageSize === 'string') {
-              const clientHeight = await mainWindow.webContents.executeJavaScript(
-                'document.body.clientHeight'
-              )
+            if (typeof options.pageSize === "string") {
+              const clientHeight =
+                await mainWindow.webContents.executeJavaScript(
+                  "document.body.clientHeight"
+                );
               console.log(
-                'convertPixelsToMicrons(clientHeight);',
+                "convertPixelsToMicrons(clientHeight);",
                 convertPixelsToMicrons(clientHeight),
                 clientHeight
-              )
-              height = convertPixelsToMicrons(clientHeight)
+              );
+              height = convertPixelsToMicrons(clientHeight);
             }
 
-            let maxHeight = 210000
+            let maxHeight = 210000;
 
             if (height <= 210000) {
-              maxHeight = 210000
+              maxHeight = 210000;
             } else if (height <= 297000) {
-              maxHeight = 297000
+              maxHeight = 297000;
             } else {
-              maxHeight = 3276000
+              maxHeight = 3276000;
             }
 
             if (true || !options.preview) {
@@ -166,49 +177,49 @@ export class PosPrinter {
                    * 1px = 264.5833 microns
                    */
 
-                  pageSize111: { width, height },
-                  pageSize: {
+                  pageSize: { width, height },
+                  pageSize12: {
                     width: 72000, // 80mm
-                    height: maxHeight // chiều cao tùy ý, đủ dài cho hóa đơn (có thể chỉnh sửa)
+                    height: maxHeight, // chiều cao tùy ý, đủ dài cho hóa đơn (có thể chỉnh sửa)
                   },
                   ...(options.header && { color: options.header }),
                   ...(options.footer && { color: options.footer }),
                   ...(options.color && { color: options.color }),
                   ...(options.printBackground && {
-                    printBackground: options.printBackground
+                    printBackground: options.printBackground,
                   }),
                   ...(options.margins && { margins: options.margins }),
                   ...(options.landscape && { landscape: options.landscape }),
                   ...(options.scaleFactor && {
-                    scaleFactor: options.scaleFactor
+                    scaleFactor: options.scaleFactor,
                   }),
                   ...(options.pagesPerSheet && {
-                    pagesPerSheet: options.pagesPerSheet
+                    pagesPerSheet: options.pagesPerSheet,
                   }),
                   ...(options.collate && { collate: options.collate }),
                   ...(options.pageRanges && { pageRanges: options.pageRanges }),
                   ...(options.duplexMode && { duplexMode: options.duplexMode }),
-                  ...(options.dpi && { dpi: options.dpi })
+                  ...(options.dpi && { dpi: options.dpi }),
                 },
                 (arg, err) => {
                   if (err) {
-                    window_print_error = err
-                    reject(err)
+                    window_print_error = err;
+                    reject(err);
                   }
                   if (!printedState) {
-                    resolve({ complete: arg, options })
-                    printedState = true
+                    resolve({ complete: arg, options });
+                    printedState = true;
                   }
                   // mainWindow.close();
                 }
-              )
+              );
             } else {
-              resolve({ complete: true, data, options })
+              resolve({ complete: true, data, options });
             }
           })
-          .catch((err) => reject(err))
-      })
-    })
+          .catch((err) => reject(err));
+      });
+    });
   }
 
   /**
@@ -218,7 +229,10 @@ export class PosPrinter {
    * @description Render the print data in the render process index.html
    *
    */
-  private static renderPrintDocument(window: any, data: PosPrintData[]): Promise<any> {
+  private static renderPrintDocument(
+    window: any,
+    data: PosPrintData[]
+  ): Promise<any> {
     return new Promise(async (resolve, reject) => {
       // data.forEach(async (line, lineIndex) => );
       for (const [lineIndex, line] of data.entries()) {
@@ -226,58 +240,64 @@ export class PosPrinter {
         /**
          * Throw an error if image is set without path or url.
          */
-        if (line.type === 'image' && !line.path && !line.url) {
-          window.close()
-          reject(new Error('An Image url/path is required for type image').toString())
-          break
+        if (line.type === "image" && !line.path && !line.url) {
+          window.close();
+          reject(
+            new Error("An Image url/path is required for type image").toString()
+          );
+          break;
         }
         /**
          * line.css is unsupported, throw an error if user sets css
          */
         if ((line as any).css) {
-          window.close()
+          window.close();
           reject(
             new Error(
-              '`options.css` in {css: ' +
+              "`options.css` in {css: " +
                 (line as any).css.toString() +
-                '} is no longer supported. Please use `options.style` instead. Example: {style: {fontSize: 12}}'
+                "} is no longer supported. Please use `options.style` instead. Example: {style: {fontSize: 12}}"
             )
-          )
-          break
+          );
+          break;
         }
         /**
          * line.style is no longer a string but an object, throw and error if a use still sets a string
          *
          */
-        if (!!line.style && typeof line.style !== 'object') {
-          window.close()
+        if (!!line.style && typeof line.style !== "object") {
+          window.close();
           reject(
             new Error(
               '`options.styles` at "' +
                 line.style +
                 '" should be an object. Example: {style: {fontSize: 12}}'
             )
-          )
-          break
+          );
+          break;
         }
 
         try {
-          const result: any = await sendIpcMsg('render-line', window.webContents, {
-            line,
-            lineIndex
-          })
+          const result: any = await sendIpcMsg(
+            "render-line",
+            window.webContents,
+            {
+              line,
+              lineIndex,
+            }
+          );
 
           if (!result.status) {
-            window.close()
-            reject(result.error) // Hoặc có thể `throw` lỗi
-            return
+            window.close();
+            reject(result.error); // Hoặc có thể `throw` lỗi
+            return;
           }
         } catch (error) {
-          reject(error)
+          reject(error);
         }
       }
       // when the render process is done rendering the page, resolve
-      resolve({ message: 'page-rendered' })
-    })
+      resolve({ message: "page-rendered" });
+    });
   }
 }
