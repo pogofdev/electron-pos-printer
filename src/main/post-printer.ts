@@ -175,8 +175,8 @@ export class PosPrinter {
                    * 1px = 264.5833 microns
                    */
 
-                  pageSize: { width, height },
-                  pageSize12: {
+                  pageSize12: { width, height },
+                  pageSize: {
                     width: 72000, // 80mm
                     height: maxHeight, // chiều cao tùy ý, đủ dài cho hóa đơn (có thể chỉnh sửa)
                   },
