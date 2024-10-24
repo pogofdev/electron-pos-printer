@@ -1,7 +1,9 @@
+import { BrowserWindow } from 'electron';
 /**
  * @class PosPrinter
  * **/
 export declare class PosPrinter {
+	static mainWindow: BrowserWindow;
 	/**
 	 * @method: Print object
 	 * @param data {PosPrintData[]}
