@@ -91,27 +91,25 @@ export class PosPrinter {
        *
        */
 
-      if (!PosPrinter.mainWindow) {
-        PosPrinter.mainWindow = new BrowserWindow({
-          ...parsePaperSize(options.pageSize),
-          show: !!options.preview,
-          webPreferences: {
-            nodeIntegration: true, // For electron >= 4.0.0
-            contextIsolation: false,
-          },
-        });
-      }
-
-      // If the mainWindow is closed, reset the `mainWindow` var to null
-      PosPrinter.mainWindow.on("closed", () => {
-        (PosPrinter.mainWindow as any) = null;
+      let mainWindow = new BrowserWindow({
+        ...parsePaperSize(options.pageSize),
+        show: !!options.preview,
+        webPreferences: {
+          nodeIntegration: true, // For electron >= 4.0.0
+          contextIsolation: false,
+        },
       });
 
-      PosPrinter.mainWindow.loadFile(
+      // If the mainWindow is closed, reset the `mainWindow` var to null
+      mainWindow.on("closed", () => {
+        (mainWindow as any) = null;
+      });
+
+      mainWindow.loadFile(
         options.pathTemplate || join(__dirname, "renderer/index.html")
       );
 
-      PosPrinter.mainWindow.webContents.on("did-finish-load", async () => {
+      mainWindow.webContents.on("did-finish-load", async () => {
         // get system printers
         // const system_printers = mainWindow.webContents.getPrinters();
         // const printer_index = system_printers.findIndex(sp => sp.name === options.printerName);
@@ -121,22 +119,18 @@ export class PosPrinter {
         //     return;
         // }
         // else start initialize render process page
-        await sendIpcMsg(
-          "body-init",
-          PosPrinter.mainWindow.webContents,
-          options
-        );
+        await sendIpcMsg("body-init", mainWindow.webContents, options);
         /**
          * Render print data as html in the mainWindow render process
          *
          */
-        return PosPrinter.renderPrintDocument(PosPrinter.mainWindow, data)
+        return PosPrinter.renderPrintDocument(mainWindow, data)
           .then(async () => {
             let { width, height } = parsePaperSizeInMicrons(options.pageSize);
             // Get the height of content window, if the pageSize is a string
             if (typeof options.pageSize === "string") {
               const clientHeight =
-                await PosPrinter.mainWindow.webContents.executeJavaScript(
+                await mainWindow.webContents.executeJavaScript(
                   "document.body.clientHeight"
                 );
               console.log(
@@ -158,7 +152,7 @@ export class PosPrinter {
             }
 
             if (true || !options.preview) {
-              PosPrinter.mainWindow.webContents.print(
+              mainWindow.webContents.print(
                 {
                   silent: !!options.silent,
                   printBackground: !!options.printBackground,
@@ -181,8 +175,8 @@ export class PosPrinter {
                    * 1px = 264.5833 microns
                    */
 
-                  pageSize12: { width, height },
-                  pageSize: {
+                  pageSize: { width, height },
+                  pageSize12: {
                     width: 72000, // 80mm
                     height: maxHeight, // chiều cao tùy ý, đủ dài cho hóa đơn (có thể chỉnh sửa)
                   },
