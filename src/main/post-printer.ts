@@ -21,7 +21,7 @@ if ((process as any).type == "renderer") {
  * @class PosPrinter
  * **/
 export class PosPrinter {
-  static mainWindow: BrowserWindow;
+  // static mainWindow: BrowserWindow;
   /**
    * @method: Print object
    * @param data {PosPrintData[]}
@@ -151,7 +151,7 @@ export class PosPrinter {
               maxHeight = 3276000;
             }
 
-            if (true || !options.preview) {
+            if (!options.preview) {
               mainWindow.webContents.print(
                 {
                   silent: !!options.silent,
@@ -208,7 +208,7 @@ export class PosPrinter {
                     resolve({ complete: arg, options });
                     printedState = true;
                   }
-                  // mainWindow.close();
+                  mainWindow.close();
                 }
               );
             } else {
